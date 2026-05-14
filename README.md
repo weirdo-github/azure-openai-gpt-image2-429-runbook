@@ -2,6 +2,7 @@
 
 日期: 2026-05-14  
 对象: Azure OpenAI / Microsoft Foundry `gpt-image-2`、`GlobalStandard` / `DataZoneStandard` 图像生成部署
+By: Jeff Feng
 
 ## 结论摘要
 
