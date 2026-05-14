@@ -26,7 +26,7 @@
 
 Azure OpenAI quota 文档列出 `gpt-image-2` 默认 quota:
 
-- `GlobalStandard`: 9 RPM
+- `GlobalStandard`: 9 RPM （实际只能开出到2）
 - `DataZoneStandard`: 3 RPM
 
 参考: [Azure OpenAI quotas and limits](https://learn.microsoft.com/en-us/azure/foundry/openai/quotas-limits)
