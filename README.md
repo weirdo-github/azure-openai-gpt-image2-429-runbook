@@ -414,36 +414,8 @@ client = AzureOpenAI(..., max_retries=0)
 
 如果业务是 latency-sensitive 或 mission-critical, `GlobalStandard` 的共享池特性无法完全避免抖动。Azure 文档建议对一致吞吐和 latency SLA 有要求的生产工作负载考虑 Provisioned Throughput。
 
-## 建议的调度器伪代码
+注：截止2026 5月14日，GPT-Image-2 PTU暂时还没上线，若有任何技术或产品问题，敬请联系微软团队。
 
-```python
-def choose_deployment(deployments):
-    healthy = [d for d in deployments if now() >= d.next_available_at]
-    healthy.sort(key=lambda d: (d.inflight, d.p95_latency_ms, d.last_429_at or 0))
-    return healthy[0] if healthy else min(deployments, key=lambda d: d.next_available_at)
-
-def on_response(deployment, response):
-    headers = response.headers
-
-    if response.status_code == 200:
-        deployment.consecutive_429 = 0
-        deployment.limit_requests = int(headers.get("x-ratelimit-limit-requests", deployment.configured_rpm))
-        deployment.remaining_requests = int(headers.get("x-ratelimit-remaining-requests", 0))
-        return
-
-    if response.status_code == 429:
-        deployment.consecutive_429 += 1
-        retry_after = parse_retry_after(headers)
-
-        if retry_after is not None:
-            deployment.next_available_at = now() + retry_after + random_jitter(0.5, 2.0)
-        else:
-            delay = min(60, 2 ** min(deployment.consecutive_429, 6))
-            deployment.next_available_at = now() + delay + random_jitter(0, delay * 0.2)
-
-        if response.error_code == "EngineOverloaded":
-            deployment.capacity_pressure_score += 1
-```
 
 ## 可复用探针脚本
 
